@@ -1,0 +1,458 @@
+Last login: Mon Jul  5 10:00:13 on console
+s%
+(base) ➜  ~ conda env list
+# conda environments:
+#
+base                  *  /Users/yerang/miniconda3
+crud2                    /Users/yerang/miniconda3/envs/crud2
+mysite                   /Users/yerang/miniconda3/envs/mysite
+test                     /Users/yerang/miniconda3/envs/test
+westagram                /Users/yerang/miniconda3/envs/westagram
+westarbucks              /Users/yerang/miniconda3/envs/westarbucks
+
+(base) ➜  ~ conda create -n watcu python=3.9
+Collecting package metadata (current_repodata.json): done
+Solving environment: done
+
+
+==> WARNING: A newer version of conda exists. <==
+  current version: 4.9.2
+  latest version: 4.10.3
+
+Please update conda by running
+
+    $ conda update -n base -c defaults conda
+
+
+
+## Package Plan ##
+
+  environment location: /Users/yerang/miniconda3/envs/watcu
+
+  added / updated specs:
+    - python=3.9
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    pip-21.1.3                 |   py39hecd8cb5_0         1.8 MB
+    ------------------------------------------------------------
+                                           Total:         1.8 MB
+
+The following NEW packages will be INSTALLED:
+
+  ca-certificates    pkgs/main/osx-64::ca-certificates-2021.5.25-hecd8cb5_1
+  certifi            pkgs/main/osx-64::certifi-2021.5.30-py39hecd8cb5_0
+  libcxx             pkgs/main/osx-64::libcxx-10.0.0-1
+  libffi             pkgs/main/osx-64::libffi-3.3-hb1e8313_2
+  ncurses            pkgs/main/osx-64::ncurses-6.2-h0a44026_1
+  openssl            pkgs/main/osx-64::openssl-1.1.1k-h9ed2024_0
+  pip                pkgs/main/osx-64::pip-21.1.3-py39hecd8cb5_0
+  python             pkgs/main/osx-64::python-3.9.5-h88f2d9e_3
+  readline           pkgs/main/osx-64::readline-8.1-h9ed2024_0
+  setuptools         pkgs/main/osx-64::setuptools-52.0.0-py39hecd8cb5_0
+  sqlite             pkgs/main/osx-64::sqlite-3.36.0-hce871da_0
+  tk                 pkgs/main/osx-64::tk-8.6.10-hb0a8c7a_0
+  tzdata             pkgs/main/noarch::tzdata-2021a-h52ac0ba_0
+  wheel              pkgs/main/noarch::wheel-0.36.2-pyhd3eb1b0_0
+  xz                 pkgs/main/osx-64::xz-5.2.5-h1de35cc_0
+  zlib               pkgs/main/osx-64::zlib-1.2.11-h1de35cc_3
+
+
+Proceed ([y]/n)? y
+
+
+Downloading and Extracting Packages
+pip-21.1.3           | 1.8 MB    | ##################################### | 100%
+Preparing transaction: done
+Verifying transaction: done
+Executing transaction: done
+#
+# To activate this environment, use
+#
+#     $ conda activate watcu
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+(base) ➜  ~
+(base) ➜  ~
+(base) ➜  ~
+(base) ➜  ~ conda env list
+# conda environments:
+#
+base                  *  /Users/yerang/miniconda3
+crud2                    /Users/yerang/miniconda3/envs/crud2
+mysite                   /Users/yerang/miniconda3/envs/mysite
+test                     /Users/yerang/miniconda3/envs/test
+watcu                    /Users/yerang/miniconda3/envs/watcu
+westagram                /Users/yerang/miniconda3/envs/westagram
+westarbucks              /Users/yerang/miniconda3/envs/westarbucks
+
+(base) ➜  ~ conda activate watcu
+(watcu) ➜  ~ pip install django
+Collecting django
+  Downloading Django-3.2.5-py3-none-any.whl (7.9 MB)
+     |████████████████████████████████| 7.9 MB 1.5 MB/s
+Collecting sqlparse>=0.2.2
+  Using cached sqlparse-0.4.1-py3-none-any.whl (42 kB)
+Collecting asgiref<4,>=3.3.2
+  Downloading asgiref-3.4.1-py3-none-any.whl (25 kB)
+Collecting pytz
+  Using cached pytz-2021.1-py2.py3-none-any.whl (510 kB)
+Installing collected packages: sqlparse, pytz, asgiref, django
+Successfully installed asgiref-3.4.1 django-3.2.5 pytz-2021.1 sqlparse-0.4.1
+(watcu) ➜  ~ pip install django-cors-headers
+Collecting django-cors-headers
+  Using cached django_cors_headers-3.7.0-py3-none-any.whl (12 kB)
+Requirement already satisfied: Django>=2.2 in ./miniconda3/envs/watcu/lib/python3.9/site-packages (from django-cors-headers) (3.2.5)
+Requirement already satisfied: pytz in ./miniconda3/envs/watcu/lib/python3.9/site-packages (from Django>=2.2->django-cors-headers) (2021.1)
+Requirement already satisfied: asgiref<4,>=3.3.2 in ./miniconda3/envs/watcu/lib/python3.9/site-packages (from Django>=2.2->django-cors-headers) (3.4.1)
+Requirement already satisfied: sqlparse>=0.2.2 in ./miniconda3/envs/watcu/lib/python3.9/site-packages (from Django>=2.2->django-cors-headers) (0.4.1)
+Installing collected packages: django-cors-headers
+Successfully installed django-cors-headers-3.7.0
+(watcu) ➜  ~ pip install mysqlclient
+Collecting mysqlclient
+  Using cached mysqlclient-2.0.3-cp39-cp39-macosx_10_9_x86_64.whl
+Installing collected packages: mysqlclient
+Successfully installed mysqlclient-2.0.3
+(watcu) ➜  ~ pip freeze
+asgiref==3.4.1
+certifi==2021.5.30
+Django==3.2.5
+django-cors-headers==3.7.0
+mysqlclient==2.0.3
+pytz==2021.1
+sqlparse==0.4.1
+(watcu) ➜  ~ cd Desktop/wecode
+(watcu) ➜  wecode ls
+22-Westagram-backend mysite               westarbucks
+crud2                test1
+(watcu) ➜  wecode mkdir watcu
+(watcu) ➜  wecode ls
+22-Westagram-backend mysite               watcu
+crud2                test1                westarbucks
+(watcu) ➜  wecode cd watcu
+(watcu) ➜  watcu ls
+(watcu) ➜  watcu git clone https://github.com/wecode-bootcamp-korea/22-1st-watCU-backend.git
+'22-1st-watCU-backend'에 복제합니다...
+warning: 빈 저장소를 복제한 것처럼 보입니다.
+(watcu) ➜  watcu ls
+22-1st-watCU-backend
+(watcu) ➜  watcu rm -rf 22-1st-watCU-backend
+(watcu) ➜  watcu ls
+(watcu) ➜  watcu cd ..
+(watcu) ➜  wecode rm -rf watcu
+(watcu) ➜  wecode ls
+22-Westagram-backend mysite               westarbucks
+crud2                test1
+(watcu) ➜  wecode git clone https://github.com/wecode-bootcamp-korea/22-1st-watCU-backend.git
+'22-1st-watCU-backend'에 복제합니다...
+warning: 빈 저장소를 복제한 것처럼 보입니다.
+(watcu) ➜  wecode ls
+22-1st-watCU-backend crud2                test1
+22-Westagram-backend mysite               westarbucks
+(watcu) ➜  wecode ls
+22-1st-watCU-backend crud2                test1
+22-Westagram-backend mysite               westarbucks
+(watcu) ➜  wecode cd 22-1st-watCU-backend
+(watcu) ➜  22-1st-watCU-backend git:(main) ls
+(watcu) ➜  22-1st-watCU-backend git:(main) ls
+(watcu) ➜  22-1st-watCU-backend git:(main) git status
+현재 브랜치 main
+
+아직 커밋이 없습니다
+
+커밋할 사항 없음 (파일을 만들거나 복사하고 "git add"를 사용하면 추적합니다)
+(watcu) ➜  22-1st-watCU-backend git:(main) django-admin startproject watcu
+(watcu) ➜  22-1st-watCU-backend git:(main) ✗ rm -rf watcu
+(watcu) ➜  22-1st-watCU-backend git:(main) ls
+(watcu) ➜  22-1st-watCU-backend git:(main) ls
+(watcu) ➜  22-1st-watCU-backend git:(main) django-admin startproject watcu .
+(watcu) ➜  22-1st-watCU-backend git:(main) ✗ ls
+manage.py watcu
+(watcu) ➜  22-1st-watCU-backend git:(main) ✗ pip freeze > requirements.txt
+(watcu) ➜  22-1st-watCU-backend git:(main) ✗ ls
+manage.py        requirements.txt watcu
+(watcu) ➜  22-1st-watCU-backend git:(main) ✗ vi requirements.txt
+(watcu) ➜  22-1st-watCU-backend git:(main) ✗ ls
+manage.py        requirements.txt watcu
+(watcu) ➜  22-1st-watCU-backend git:(main) ✗ touch .gitignore
+(watcu) ➜  22-1st-watCU-backend git:(main) ✗ ls -la
+total 16
+# Created by https://www.toptal.com/developers/gitignore/api/macos,python,django,vscode,vim
+# Edit at https://www.toptal.com/developers/gitignore?templates=macos,python,django,vscode,vim
+
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
+
+# If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
+# in your Git repository. Update and uncomment the following line accordingly.
+# <django-project-name>/staticfiles/
+
+### Django.Python Stack ###
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+".gitignore" [noeol] 274L, 4370C
+
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
+
+# in your Git repository. Update and uncomment the following line accordingly.
+# <django-project-name>/staticfiles/
+
+### Django.Python Stack ###
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+pytestdebug.log
+
+# Translations
+*.mo
+
+# Django stuff:
+
+# Flask stuff:
+# Sphinx documentation
+docs/_build/
+doc/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#   install all needed dependencies.
+#Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# profiling data
+.prof
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+
+# C extensions
+
+# Distribution / packaging
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+
+# Django stuff:
+
+# Flask stuff:
+
+# Scrapy stuff:
+
+# Sphinx documentation
+
+# PyBuilder
+
+# Jupyter Notebook
+
+# IPython
+
+# pyenv
+
+# pipenv
+#   install all needed dependencies.
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+
+# Celery stuff
+
+# SageMath parsed files
+
+# Environments
+
+# Spyder project settings
+
+# Rope project settings
+
+# mkdocs documentation
+
+# mypy
+
+# Pyre type checker
+
+# pytype static type analyzer
+
+# profiling data
+
+### Vim ###
+# Swap
+[._]*.s[a-v][a-z]
+!*.svg  # comment out if you don't need vector files
+[._]*.sw[a-p]
+[._]sw[a-p]
+
+# Session
+Session.vim
+Sessionx.vim
+
+# Temporary
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
+
+### vscode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# End of https://www.toptal.com/developers/gitignore/api/macos,python,django,vscode,vim
+
+my_settings.py
+.csv
