@@ -13,7 +13,7 @@ class Product(models.Model):
     description    = models.CharField(max_length=200)
     category       = models.ForeignKey('Category', on_delete=models.CASCADE)
     rated_users    = models.ManyToManyField('users.User', related_name='rated_products', through='Rating') 
-    liked_users    = models.ManyToManyField('Like', related_name='liked_products', through='Like')
+    liked_users    = models.ManyToManyField('likes.Like', related_name='liked_products', through='Like')
 
     class Meta:
         db_table = 'products'
