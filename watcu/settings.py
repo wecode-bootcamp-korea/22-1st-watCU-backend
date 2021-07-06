@@ -40,6 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'users',
+<<<<<<< HEAD
+=======
+    'products',
+    'ratings',
+    'likes',
+    'comments',
+>>>>>>> a110434d1ef90b6259f3a5920570c6528eccd2be
 ]
 
 MIDDLEWARE = [
