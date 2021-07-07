@@ -1,9 +1,10 @@
-from django.db.models.aggregates import Avg
-from products.models import Category, Product
+from operator import itemgetter
 
 from django.http      import JsonResponse
 from django.db.models import Avg
 from django.views     import View
+
+from django.db.models.aggregates import Avg
 
 from products.models import Category, Product, Image
 from ratings.models  import Rating
@@ -11,16 +12,22 @@ from ratings.models  import Rating
 class MainView(View):
     def get(self, request):
         try:
-            results = []
+            category = request.GET.get('category')
+            results  = []
 
-            for product in Product.objects.all():
+            if category == '전체':
+                products = Product.objects.all()
+            else:
+                products = Product.objects.filter(category__name=category)
+        
+            for product in products:
                 image_url = product.image_set.first().image_url
                 
                 if Rating.objects.filter(product=product).exists():        
                      average = Rating.objects.filter(product=product).aggregate(average=Avg('rating'))
                      average_rating = round(average['average'], 1)
                 else:
-                    average_rating = "0.0"
+                    average_rating = 0.0
 
                 results.append(
                     {
@@ -32,6 +39,9 @@ class MainView(View):
                         'average_rating' : average_rating,
                     }
                 )
+
+            
+            results = sorted(results, key=itemgetter('average_rating'), reverse=True)
             
             return JsonResponse({'results': results}, status=200)
         
