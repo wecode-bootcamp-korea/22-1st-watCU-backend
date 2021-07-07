@@ -52,10 +52,12 @@ class RatingView(View):
             user    = User.objects.get(id=user_id)
             product = Product.objects.get(id=product_id)
 
-            if Rating.objects.filter(user=user, product=product).exists():
-                Rating.objects.filter(user=user, product=product).delete()
+            if not Rating.objects.filter(user=user, product=product).exists():
+                return JsonResponse({'message': 'INVALID_REQUEST'})
+            
+            Rating.objects.filter(user=user, product=product).delete()
 
-            return JsonResponse({'message': 'SUCCESS'}, 201)
+            return JsonResponse({'message': 'SUCCESS'}, status=201)
 
         except User.DoesNotExist:
             return JsonResponse({'message': 'USER_DOES_NOT_EXISTS'}, status=400)
