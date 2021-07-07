@@ -100,6 +100,8 @@ class DetailView(View):
                     )
                 
                 return JsonResponse({'results': results}, status=200)
+            
+            return JsonResponse({'message': 'INVALID_REQUEST'}, status=400)
 
         except Product.DoesNotExist:
             return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXISTS'}, status=400)       
