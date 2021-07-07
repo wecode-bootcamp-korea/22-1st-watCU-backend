@@ -40,8 +40,7 @@ class MainView(View):
                         'description'    : product.description,
                     }
                 )
-
-            
+                
             results = sorted(results, key=itemgetter('average_rating'), reverse=True)
             
             return JsonResponse({'results': results}, status=200)
