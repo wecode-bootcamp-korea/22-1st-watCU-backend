@@ -1,24 +1,25 @@
 import json
 
 from django.db.models.expressions import Exists
-from products.models import Category, Product
+from products.models              import Category, Product
 
-from django.http     import JsonResponse
-from django.views    import View
-from django.db       import DataError
+from django.http                  import JsonResponse
+from django.views                 import View
+from django.db                    import DataError
 
-from products.models import Category, Product
-from users.models    import User
-from likes.models    import Done, Wish, Like
-from users.utils     import ConfirmUser
+from products.models              import Category, Product
+from users.models                 import User
+from likes.models                 import Done, Wish, Like
+from users.utils                  import ConfirmUser
 
 class WishView(View):
     # 먹고싶어요
     @ConfirmUser
     def get(self, request, product_id):
         try:
-            user = request.user
+            user        = request.user
             filter_like = Wish.objects.filter(product_id=product_id).filter(user_id=user.id).exists()
+
             if not filter_like:
                 Wish.objects.create(
                     user_id     = user.id,
@@ -37,7 +38,7 @@ class WishView(View):
     @ConfirmUser
     def delete(self, request, product_id):
         try:
-            user = request.user
+            user        = request.user
             filter_like = Wish.objects.filter(product_id=product_id).filter(user_id=user.id)
 
             if filter_like.exists:
@@ -55,7 +56,7 @@ class DoneView(View):
     @ConfirmUser
     def get(self, request, product_id):
         try:
-            user = request.user
+            user        = request.user
             filter_like = Done.objects.filter(product_id=product_id).filter(user_id=user.id).exists()
 
             if not filter_like:
@@ -76,7 +77,7 @@ class DoneView(View):
     @ConfirmUser
     def delete(self, request, product_id):
         try:
-            user = request.user
+            user        = request.user
             filter_like = Done.objects.filter(product_id=product_id).filter(user_id=user.id)
 
             if filter_like.exists:
@@ -94,7 +95,7 @@ class LikeView(View):
     @ConfirmUser
     def get(self, request, comment_id):
         try:
-            user = request.user
+            user        = request.user
             filter_like = Done.objects.filter(comment_id=comment_id).filter(user_id=user.id).exists()
 
             if not filter_like:
@@ -115,7 +116,7 @@ class LikeView(View):
     @ConfirmUser
     def delete(self, request, comment_id):
         try:
-            user = request.user
+            user        = request.user
             filter_like = Done.objects.filter(comment_id=comment_id).filter(user_id=user.id)
 
             if filter_like.exists:

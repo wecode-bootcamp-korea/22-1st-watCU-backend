@@ -20,5 +20,4 @@ class Like(models.Model):
     comment = models.ForeignKey('comments.Comment', on_delete=CASCADE) 
 
     class Meta:
-        
         db_table = 'likes'
