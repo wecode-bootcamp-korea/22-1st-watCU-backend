@@ -13,7 +13,7 @@ from likes.models    import Done, Wish, Like
 from users.utils     import ConfirmUser
 
 class WishView(View):
-    # 먹고싶어요 
+    # 먹고싶어요
     @ConfirmUser
     def get(self, request, product_id):
         try:
@@ -90,6 +90,7 @@ class DoneView(View):
             return JsonResponse({'message': error}, status=400)
 
 class LikeView(View):
+    #댓글 좋아요
     @ConfirmUser
     def get(self, request, comment_id):
         try:
@@ -110,7 +111,7 @@ class LikeView(View):
         except Exception as error:
             return JsonResponse({'message': error}, status=400)
 
-    # 먹어봤어요 삭제
+    # 댓글 좋아요 삭제
     @ConfirmUser
     def delete(self, request, comment_id):
         try:
