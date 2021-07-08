@@ -1,5 +1,5 @@
-from django.db.models.deletion import CASCADE
 from django.db                 import models
+from django.db.models.deletion import CASCADE
 
 class Wish(models.Model):
     product     = models.ForeignKey('products.Product', on_delete=CASCADE)
@@ -20,5 +20,4 @@ class Like(models.Model):
     comment = models.ForeignKey('comments.Comment', on_delete=CASCADE) 
 
     class Meta:
-        
         db_table = 'likes'
