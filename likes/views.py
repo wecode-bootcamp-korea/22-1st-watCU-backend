@@ -25,7 +25,7 @@ class WishView(View):
                     product_id  = product_id
                     )
                 
-                return JsonResponse({'results': True}, status=201)
+                return JsonResponse({'results': 'Success'}, status=201)
             
             else:
                 raise ValueError
@@ -56,7 +56,7 @@ class DoneView(View):
     def get(self, request, product_id):
         try:
             user = request.user
-            filter_like = Done.objects.filter(product=product_id).filter(user=user.id).exists()
+            filter_like = Done.objects.filter(product_id=product_id).filter(user_id=user.id).exists()
 
             if not filter_like:
                 Done.objects.create(
@@ -77,7 +77,7 @@ class DoneView(View):
     def delete(self, request, product_id):
         try:
             user = request.user
-            filter_like = Done.objects.filter(product=product_id).filter(user=user.id)
+            filter_like = Done.objects.filter(product_id=product_id).filter(user_id=user.id)
 
             if filter_like.exists:
                 filter_like.delete()
@@ -95,7 +95,7 @@ class LikeView(View):
     def get(self, request, comment_id):
         try:
             user = request.user
-            filter_like = Done.objects.filter(comment=comment_id).filter(user=user.id).exists()
+            filter_like = Done.objects.filter(comment_id=comment_id).filter(user_id=user.id).exists()
 
             if not filter_like:
                 Done.objects.create(
@@ -116,7 +116,7 @@ class LikeView(View):
     def delete(self, request, comment_id):
         try:
             user = request.user
-            filter_like = Done.objects.filter(comment=comment_id).filter(user=user.id)
+            filter_like = Done.objects.filter(comment_id=comment_id).filter(user_id=user.id)
 
             if filter_like.exists:
                 filter_like.delete()
