@@ -17,21 +17,15 @@ class RatingView(View):
             user    = User.objects.get(id=user_id)
             product = Product.objects.get(id=product_id)
             rating  = data['rating']
-
-            if Rating.objects.filter(user=user, product=product).exists():
-                Rating.objects.filter(user=user, product=product).update(
-                    rating = rating
-                )
-
-                return JsonResponse({'message': 'RATING_MODIFIED_SUCCESS'}, status=201)
             
-            Rating.objects.create(
-                user    = user,
-                product = product,
-                rating  = rating,
-            )
+            object, is_created = Rating.objects.get_or_create(user=user, product=product, defaults={'rating': 0.0})
+            object.rating = rating
+            object.save()
 
-            return JsonResponse({'message': 'SUCCESS'}, status=200)
+            if is_created: 
+                return JsonResponse({'message': 'SUCCESS'}, status=201)
+
+            return JsonResponse({'message': 'MODIFIED_SUCCESS'}, status=200)
 
         except User.DoesNotExist:
             return JsonResponse({'message': 'USER_DOES_NOT_EXISTS'}, status=400)
@@ -53,11 +47,11 @@ class RatingView(View):
             product = Product.objects.get(id=product_id)
 
             if not Rating.objects.filter(user=user, product=product).exists():
-                return JsonResponse({'message': 'INVALID_REQUEST'})
+                return JsonResponse({'message': 'INVALID_REQUEST'}, status=400)
             
             Rating.objects.filter(user=user, product=product).delete()
 
-            return JsonResponse({'message': 'SUCCESS'}, status=201)
+            return JsonResponse({'message': 'SUCCESS'}, status=204)
 
         except User.DoesNotExist:
             return JsonResponse({'message': 'USER_DOES_NOT_EXISTS'}, status=400)
