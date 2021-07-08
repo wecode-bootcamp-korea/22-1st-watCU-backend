@@ -38,6 +38,7 @@ class MainView(View):
                         'image_url'      : image_url,
                         'average_rating' : average_rating,
                         'description'    : product.description,
+                        'product_id'     : product.id,
                     }
                 )
                 
