@@ -1,4 +1,3 @@
-from django.shortcuts import render
 import json
 import re
 import bcrypt
@@ -39,7 +38,7 @@ class SignUpView(View):
                 password = hashed_pw,
             )
 
-            access_token   = jwt.encode({'user' : user.id}, SECRET_KEY, algorithm = 'HS256' )
+            access_token = jwt.encode({'user' : user.id}, SECRET_KEY, algorithm = 'HS256' )
 
             return JsonResponse({"token" : access_token}, status = 201)
 

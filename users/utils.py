@@ -13,7 +13,7 @@ class ConfirmUser:
 
     def __call__(self, request, *arg, **kargs):
         try:
-            access_token     = request.headers.get('Athorization', None)
+            access_token     = request.headers.get('Authorization', None)
 
             if access_token:
                 payload      = jwt.decode( access_token, SECRET_KEY, algorithms = 'HS256' )
