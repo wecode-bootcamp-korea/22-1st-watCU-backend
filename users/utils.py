@@ -13,7 +13,8 @@ class ConfirmUser:
 
     def __call__(self, request, *arg, **kargs):
         try:
-            access_token     = request.headers.get('Authorization')
+            access_token     = request.headers.get('Authorization', None)
+
             if access_token:
                 payload      = jwt.decode( access_token, SECRET_KEY, algorithms = 'HS256' )
                 login_user   = User.objects.get(id = payload['user'])
@@ -27,4 +28,5 @@ class ConfirmUser:
             return JsonResponse({"message" : "INVALLED TOKEN"}, status = 401)
 
         except User.DoesNotExist:
+
             return JsonResponse({"message" : "INVALLED USER"}, status = 401)
