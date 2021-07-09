@@ -18,68 +18,44 @@ class StatusView(View):
     @ConfirmUser
     def post(self, request, product_id):
         try:
-            data       = json.loads(request.body)
-            user       = request.user
-            status     = data['status']
-            
-            Status.objects.create(
-                status     = status,
-                user_id    = user.id,
-                product_id = product_id
+            data = json.loads(request.body)
+            user    = request.user
+            status = data["status"]
+
+            status_object , created = Status.objects.get_or_create(
+                status              = status,
+                user_id             = user.id,
+                product_id          = product_id
             )
 
-            return JsonResponse({'results': 'Success'}, status=201)
+            if not created:
+                status_object.delete()
+
+                return JsonResponse({'results': f'Delete {status}'}, status=201)
+
+            return JsonResponse({'results': f'Create {status}'}, status=201)
 
         except KeyError:
             return JsonResponse({'message': 'KeyError'}, status=400)
-            
-    # 먹고싶어요 먹어봤어요 상태 삭제
-    @ConfirmUser
-    def delete(self, request, product_id):
-        try:
-            status  = request.GET.get('status', '')
-            user    = request.user
 
-            Status.objects.filter(user_id=user.id).filter(product_id=product_id).get(status=status).delete()
-
-            return JsonResponse({'results': 'Success'}, status=201)
-
-        except KeyError:
-            return JsonResponse({'message': 'KeyError'}, status=400)
-            
 class LikeView(View):
     # 댓글 좋아요 생성
     @ConfirmUser
-    def get(self, request):
+    def post(self, request, comment_id):
         try:
-            comment     = request.GET.get('comment', '')
             user        = request.user
-            like_user   = Like.objects.filter(comment_id=comment).filter(user_id=user.id).exists()
 
-            if not like_user:
-                Like.objects.create(
-                    user_id     = user.id,
-                    comment_id  = comment,
-                    )
-                
-                return JsonResponse({'results': 'Success'}, status=201)
+            like, create    = Like.objects.get_or_create(
+                user_id     = user.id,
+                comment_id  = comment_id,
+            )
             
-            else:
-                raise ValueError
-    
-        except KeyError:
-            return JsonResponse({'message': 'KeyError'}, status=400)
-
-    # 댓글 좋아요 삭제
-    @ConfirmUser
-    def delete(self, request):
-        try:
-            comment = request.GET.get('comment','')
-            user    = request.user
-            like    = Like.objects.filter(comment_id=comment).get(user_id=user.id)
-
-            like.delete()
-            return JsonResponse({'results': 'Success'}, status=201)
-    
+            if not create:
+                like.delete()
+                
+                return JsonResponse({'results': 'unlike'}, status=201)
+            
+            return JsonResponse({'results': 'like'}, status=201)
+            
         except KeyError:
             return JsonResponse({'message': 'KeyError'}, status=400)
