@@ -16,17 +16,16 @@ from users.utils                  import ConfirmUser
 class StatusView(View):
     # 먹고싶어요 먹어봤어요 상태 생성
     @ConfirmUser
-    def post(self, request):
+    def post(self, request, product_id):
         try:
-            data    = json.loads(request.body)
-            product = request.GET.get('product', '')
-            user    = request.user
-            status  = data['status']
+            data       = json.loads(request.body)
+            user       = request.user
+            status     = data['status']
             
             Status.objects.create(
                 status     = status,
-                user       = user,
-                product_id = product
+                user_id    = user.id,
+                product_id = product_id
             )
 
             return JsonResponse({'results': 'Success'}, status=201)
@@ -36,13 +35,12 @@ class StatusView(View):
             
     # 먹고싶어요 먹어봤어요 상태 삭제
     @ConfirmUser
-    def delete(self, request):
+    def delete(self, request, product_id):
         try:
             status  = request.GET.get('status', '')
-            product = request.GET.get('product')
             user    = request.user
 
-            Status.objects.filter(user_id=user.id).filter(product_id=product).get(status=status).delete()
+            Status.objects.filter(user_id=user.id).filter(product_id=product_id).get(status=status).delete()
 
             return JsonResponse({'results': 'Success'}, status=201)
 
