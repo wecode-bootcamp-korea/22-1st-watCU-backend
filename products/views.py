@@ -9,7 +9,10 @@ from django.db.models.aggregates import Avg
 from products.models import Category, Product, Image
 from ratings.models  import Rating
 
+from users.utils import ConfirmUser
+
 class ProductView(View):
+    @ConfirmUser
     def get(self, request):
         try:
             category = request.GET.get('category', '')
