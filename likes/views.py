@@ -18,9 +18,9 @@ class StatusView(View):
     @ConfirmUser
     def post(self, request, product_id):
         try:
-            data = json.loads(request.body)
+            data    = json.loads(request.body)
             user    = request.user
-            status = data["status"]
+            status  = data["status"]
 
             status_object , created = Status.objects.get_or_create(
                 status              = status,
@@ -43,9 +43,9 @@ class LikeView(View):
     @ConfirmUser
     def post(self, request, comment_id):
         try:
-            user        = request.user
+            user            = request.user
 
-            like, create    = Like.objects.get_or_create(
+            like, create = Like.objects.get_or_create(
                 user_id     = user.id,
                 comment_id  = comment_id,
             )
