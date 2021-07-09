@@ -11,17 +11,17 @@ from django.core.exceptions       import ObjectDoesNotExist
 from products.models              import Product, Category
 from users.models                 import User
 from users.validation             import email_validation, password_validation
-from my_settings                  import SECRET_KEY                 
+from my_settings                  import SECRET_KEY,ALGORITHM                
 
 class SignUpView(View):
     def post(self, request):
         try:
-            data           = json.loads(request.body)
-            email          = data['email']
-            name           = data['name']
-            password       = data['password']
-            hashed_pw      = bcrypt.hashpw( password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-            duplicate_user = User.objects.filter(email = email).exists()
+            data            = json.loads(request.body)
+            email           = data['email']
+            name            = data['name']
+            password        = data['password']
+            hashed_password = bcrypt.hashpw( password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            duplicate_user  = User.objects.filter(email = email).exists()
             
             if duplicate_user:
                 return JsonResponse({"message" : "EMAIL_ALREADY_EXISTS"}, status = 400)
@@ -35,10 +35,10 @@ class SignUpView(View):
             user = User.objects.create(
                 email    = email,
                 name     = name,
-                password = hashed_pw,
+                password = hashed_password,
             )
 
-            access_token = jwt.encode({'user' : user.id}, SECRET_KEY, algorithm = 'HS256' )
+            access_token = jwt.encode({'user' : user.id}, SECRET_KEY, algorithm = ALGORITHM)
 
             return JsonResponse({"token" : access_token}, status = 201)
 
@@ -56,18 +56,15 @@ class LoginView(View):
             password      = data['password'].encode('utf-8')
             user          = User.objects.get(email = email)
             user_password = user.password.encode('utf-8')
-            user_exists   = User.objects.filter(email = email).exists()
-            access_token  = jwt.encode( {'user' : user.id}, SECRET_KEY, algorithm = 'HS256' )
+            access_token  = jwt.encode( {'user' : user.id}, SECRET_KEY, algorithm = ALGORITHM)
 
-            if user_exists:
+            if user:
                 if bcrypt.checkpw(password, user_password):
                     return JsonResponse({"token" : access_token}, status = 201)
                 
-                else:
-                    raise ValueError
-            
-            else :
-                raise ObjectDoesNotExist
+                raise ValueError
+
+            return JsonResponse({"message": "INVALID_USER"}, status=401)
 
         except KeyError:
             return JsonResponse({"message" : "Key Error"}, status = 400)
@@ -75,30 +72,24 @@ class LoginView(View):
         except ValueError:
             return JsonResponse({"message" : "Value Error"}, status = 400)
 
-        except ObjectDoesNotExist:
-            return JsonResponse({"message" : "Does Not Exist"}, status = 404)
-
 class SearchView(View):
     def get(self, request):
         try:
-            print(request)
             word = request.GET.get('word', '')
-            print(word)
-            print(type(word))
             results=[]
 
-            ko_name       = Product.objects.filter(korean_name__icontains = word).exists()
-            en_name       = Product.objects.filter(english_name__icontains = word).exists()
+            korean_name   = Product.objects.filter(korean_name__icontains = word).exists()
+            english_name  = Product.objects.filter(english_name__icontains = word).exists()
             category_name = Category.objects.filter(name__icontains = word).exists()
 
-            if ko_name:
+            if korean_name:
                 products  = Product.objects.filter(korean_name__icontains = word)
                 for product in products:
                     results.append({
                         'word' : product.korean_name
                     })
 
-            if en_name:
+            if english_name:
                 products  = Product.objects.filter(english_name__icontains = word)
                 for product in products:
                     results.append({
@@ -112,7 +103,10 @@ class SearchView(View):
                         'word' : category.name
                     })
             
-            return JsonResponse({'results': results}, status=201)
+            return JsonResponse({'results': results}, status=200)
         
-        except Exception as error:
-            return JsonResponse({'message': error}, status=400)
+        except KeyError:
+            return JsonResponse({"message" : "Key Error"}, status = 400)
+
+        except ValueError:
+            return JsonResponse({"message" : "Value Error"}, status = 400)
