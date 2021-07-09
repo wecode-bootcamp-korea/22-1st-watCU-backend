@@ -9,10 +9,7 @@ from django.db.models.aggregates import Avg
 from products.models import Category, Product, Image
 from ratings.models  import Rating
 
-from users.utils import ConfirmUser
-
 class ProductView(View):
-    @ConfirmUser
     def get(self, request):
         try:
             category = request.GET.get('category', '')
@@ -49,7 +46,6 @@ class ProductDetailView(View):
     def get(self, request, product_id):
         try:
             product  = Product.objects.get(id=product_id)
-            category = product.category
 
             image_urls = [image.image_url for image in product.image_set.all()]
             average_rating = ( round(Rating.objects.filter(product=product).aggregate(average=Avg('rating'))['average'], 1)
@@ -57,14 +53,14 @@ class ProductDetailView(View):
                                 else 0.0 )
 
             result = {
-                'category_name'      : category.name,
-                'category_image_url' : category.image_url,
+                'category_name'      : product.category.name,
+                'category_image_url' : product.category.image_url,
                 'korean_name'        : product.korean_name,
                 'english_name'       : product.english_name,
                 'price'              : product.price,
                 'description'        : product.description,
                 'main_image_url'     : image_urls[0],
-                'sub_image_url'      : image_urls[1:],
+                'sub_image_url'      : image_urls[1:] if len(image_urls) > 1 else [],
                 'average_rating'     : average_rating,
                 'description'        : product.description,
             }
