@@ -14,7 +14,6 @@ from likes.models                 import Status, Like
 from users.utils                  import ConfirmUser
 
 class StatusView(View):
-    # 먹고싶어요 먹어봤어요 상태 생성
     @ConfirmUser
     def post(self, request, product_id):
         try:
@@ -39,7 +38,6 @@ class StatusView(View):
             return JsonResponse({'message': 'KeyError'}, status=400)
 
 class LikeView(View):
-    # 댓글 좋아요 생성
     @ConfirmUser
     def post(self, request, comment_id):
         try:
