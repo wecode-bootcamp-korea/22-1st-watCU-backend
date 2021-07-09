@@ -2,7 +2,7 @@ from django.db                 import models
 from django.db.models.deletion import CASCADE
 
 class Status(models.Model):
-    
+
     status_choice = (
         ('wish', 'Wish'),
         ('done', 'Done'),
@@ -16,7 +16,8 @@ class Status(models.Model):
         db_table = 'statuses' 
 
 class Like(models.Model):
-    user = models.ForeignKey('users.User', on_delete=CASCADE)
+
+    user    = models.ForeignKey('users.User', on_delete=CASCADE)
     comment = models.ForeignKey('comments.Comment', on_delete=CASCADE) 
 
     class Meta:

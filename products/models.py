@@ -13,8 +13,8 @@ class Product(models.Model):
     price           = models.DecimalField(max_digits=8, decimal_places=2)
     description     = models.CharField(max_length=200)
     category        = models.ForeignKey('Category', on_delete=models.CASCADE)
-    rated_users     = models.ManyToManyField('users.User', related_name='rated_products', through='ratings.Rating') 
-    liked_users     = models.ManyToManyField('users.User', related_name='liked_products', through='likes.Like')
+    # rated_users     = models.ManyToManyField('users.User', related_name='rated_products', through='ratings.Rating') 
+    # liked_users     = models.ManyToManyField('users.User', related_name='liked_products', through='likes.Like')
     commented_users = models.ManyToManyField('comments.Comment', related_name='commented_products', through='comments.Comment')
 
     class Meta:
