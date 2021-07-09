@@ -1,18 +1,47 @@
-import json
+import json, jwt
+
 from json.decoder import JSONDecodeError
 
 from django.http  import JsonResponse
 from django.views import View
+
+from my_settings import SECRET_KEY
 
 from users.models    import User
 from products.models import Product
 from ratings.models  import Rating
 
 class RatingView(View):
-    # @ConfirmUser
     def get(self, request, product_id):
+        try:
+            access_token = request.headers.get('Authorization', None)
 
-    # @login_required
+            if not access_token:
+                result = {'rating': 0.0}
+                return JsonResponse({'result': result}, status=200)
+            
+            payload = jwt.decode( access_token, SECRET_KEY, algorithms = 'HS256' )
+           
+            user    = User.objects.get(id=payload['user'])
+            product = Product.objects.get(id=product_id)
+            rating  = Rating.objects.get(user=user, product=product).rating
+            
+            result = {'rating': rating}        
+
+            return JsonResponse({'result': result}, status=200)
+
+        except jwt.InvalidTokenError:
+            return JsonResponse({'message': 'INVALID_TOKEN'}, status=400)
+        except jwt.DecodeError:
+            return JsonResponse({'message': 'DECODE_ERROR'}, status=400)
+        except User.DoesNotExist:
+            return JsonResponse({'message': 'USER_DOES_NOT_EXISTS'}, status=400)
+        except Product.DoesNotExist:
+            return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXISTS'}, status=400)
+        except Exception as error:
+            return JsonResponse({'message': error}, status=400)
+
+    # @ConfirmUser
     def post(self, request, product_id):
         try:
             # user_id = request.user_id
@@ -43,7 +72,7 @@ class RatingView(View):
         except Exception as error:
             return JsonResponse({'message': error})
 
-    # @login_required
+    # @ConfirmUser
     def delete(self, request, product_id):
         try:
             # user_id = request.user_id
