@@ -12,7 +12,6 @@ from ratings.models  import Rating
 from users.utils import ConfirmUser
 
 class ProductView(View):
-    @ConfirmUser
     def get(self, request):
         try:
             category = request.GET.get('category', '')
@@ -24,8 +23,9 @@ class ProductView(View):
                     'korean_name'    : product.korean_name,
                     'english_name'   : product.english_name,
                     'price'          : product.price,
-                    'image_url'      : product.image_set.first().image_url,
+                    'image_url'      : product.image_set.first().image_url if product.image_set.exists() else None,
                     'product_id'     : product.id,
+                    'category_id'    : category.id,
                     'average_rating' : ( round(Rating.objects.filter(product=product).aggregate(average=Avg('rating'))['average'], 1)
                                             if Rating.objects.filter(product=product).exists()
                                             else 0.0 )
@@ -45,12 +45,49 @@ class ProductView(View):
         except Exception as error:
             return JsonResponse({'message': error}, status=400)
 
+class PrivateProductView(View):
+    @ConfirmUser
+    def get(self, request):
+        try:
+            category = request.GET.get('category', '')
+            products = Product.objects.filter(category__name__startswith=category)
+
+            results = [
+                {
+                    'category_name'  : product.category.name,
+                    'korean_name'    : product.korean_name,
+                    'english_name'   : product.english_name,
+                    'price'          : product.price,
+                    'image_url'      : product.image_set.first().image_url if product.image_set.exists() else None,
+                    'product_id'     : product.id,
+                    'category_id'    : category.id,
+                    'average_rating' : ( round(Rating.objects.filter(product=product).aggregate(average=Avg('rating'))['average'], 1)
+                                            if Rating.objects.filter(product=product).exists()
+                                            else 0.0 )
+                }
+
+                for product in products
+            ]
+                
+            results = sorted(results, key=itemgetter('average_rating'), reverse=True)
+            
+            return JsonResponse({'results': results}, status=200)
+        
+        except Image.DoesNotExist:
+            return JsonResponse({'message': 'IMAGE_DOES_NOT_EXISTS'}, status=400)
+        except Product.DoesNotExist:
+            return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXISTS'}, status=400)
+        except Exception as error:
+            return JsonResponse({'message': error}, status=400)
+    
+
+
 class ProductDetailView(View):
     def get(self, request, product_id):
         try:
             product  = Product.objects.get(id=product_id)
 
-            image_urls = [image.image_url for image in product.image_set.all()]
+            image_urls = [image.image_url for image in product.image_set.all()] if product.image_set else []
             average_rating = ( round(Rating.objects.filter(product=product).aggregate(average=Avg('rating'))['average'], 1)
                                 if Rating.objects.filter(product=product).exists()
                                 else 0.0 )
@@ -62,7 +99,7 @@ class ProductDetailView(View):
                 'english_name'       : product.english_name,
                 'price'              : product.price,
                 'description'        : product.description,
-                'main_image_url'     : image_urls[0],
+                'main_image_url'     : image_urls[0] if image_urls else [],
                 'sub_image_url'      : image_urls[1:] if len(image_urls) > 1 else [],
                 'average_rating'     : average_rating,
                 'description'        : product.description,
