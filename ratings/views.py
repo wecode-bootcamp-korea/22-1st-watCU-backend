@@ -1,16 +1,21 @@
 import json
 from json.decoder import JSONDecodeError
 
-from django.http      import JsonResponse
-from django.views     import View
+from django.http  import JsonResponse
+from django.views import View
 
 from users.models    import User
 from products.models import Product
 from ratings.models  import Rating
 
 class RatingView(View):
+    # @ConfirmUser
+    def get(self, request, product_id):
+
+    # @login_required
     def post(self, request, product_id):
         try:
+            # user_id = request.user_id
             data    = json.loads(request.body)
             user_id = data['user_id']
 
@@ -38,8 +43,10 @@ class RatingView(View):
         except Exception as error:
             return JsonResponse({'message': error})
 
+    # @login_required
     def delete(self, request, product_id):
         try:
+            # user_id = request.user_id
             data    = json.loads(request.body)
             user_id = data['user_id']
 
