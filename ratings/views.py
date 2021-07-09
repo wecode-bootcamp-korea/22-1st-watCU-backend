@@ -11,6 +11,8 @@ from users.models    import User
 from products.models import Product
 from ratings.models  import Rating
 
+from users.utils import ConfirmUser
+
 class RatingView(View):
     def get(self, request, product_id):
         try:
@@ -21,7 +23,6 @@ class RatingView(View):
                 return JsonResponse({'result': result}, status=200)
             
             payload = jwt.decode( access_token, SECRET_KEY, algorithms = 'HS256' )
-           
             user    = User.objects.get(id=payload['user'])
             product = Product.objects.get(id=product_id)
             rating  = Rating.objects.get(user=user, product=product).rating
@@ -41,14 +42,12 @@ class RatingView(View):
         except Exception as error:
             return JsonResponse({'message': error}, status=400)
 
-    # @ConfirmUser
+    @ConfirmUser
     def post(self, request, product_id):
         try:
-            # user_id = request.user_id
             data    = json.loads(request.body)
-            user_id = data['user_id']
 
-            user    = User.objects.get(id=user_id)
+            user    = request.user
             product = Product.objects.get(id=product_id)
             rating  = data['rating']
             
@@ -72,14 +71,10 @@ class RatingView(View):
         except Exception as error:
             return JsonResponse({'message': error})
 
-    # @ConfirmUser
+    @ConfirmUser
     def delete(self, request, product_id):
         try:
-            # user_id = request.user_id
-            data    = json.loads(request.body)
-            user_id = data['user_id']
-
-            user    = User.objects.get(id=user_id)
+            user    = request.user
             product = Product.objects.get(id=product_id)
 
             if not Rating.objects.filter(user=user, product=product).exists():
