@@ -16,6 +16,7 @@ class Status(models.Model):
         db_table = 'statuses' 
 
 class Like(models.Model):
+
     user    = models.ForeignKey('users.User', on_delete=CASCADE)
     comment = models.ForeignKey('comments.Comment', on_delete=CASCADE) 
 
