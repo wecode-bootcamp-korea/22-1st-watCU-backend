@@ -12,8 +12,6 @@ class ConfirmUser:
         self.func = func
 
     def __call__(self, request, *arg, **kargs):
-        if (request.method == 'GET') and (not request.GET.get('page')):
-           return self.func(self, request, *arg, **kargs)
         try:
             access_token     = request.headers.get('Authorization', None)
 
