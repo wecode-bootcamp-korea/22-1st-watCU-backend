@@ -14,16 +14,10 @@ from ratings.models  import Rating
 from users.utils import ConfirmUser
 
 class RatingView(View):
+    @ConfirmUser
     def get(self, request, product_id):
         try:
-            access_token = request.headers.get('Authorization', None)
-
-            if not access_token:
-                result = {'rating': 0.0}
-                return JsonResponse({'result': result}, status=200)
-            
-            payload = jwt.decode( access_token, SECRET_KEY, algorithms = 'HS256' )
-            user    = User.objects.get(id=payload['user'])
+            user    = request.user
             product = Product.objects.get(id=product_id)
             rating  = Rating.objects.get(user=user, product=product).rating
             
