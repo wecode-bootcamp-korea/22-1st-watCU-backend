@@ -114,9 +114,6 @@ class NestedCommentView(View):
             user           = request.user
             parent_comment = Comment.objects.get(id=comment_id)
 
-            # if parent_comment.parent_commment:
-            #     raise ValueError
-
             Comment.objects.create(
                 content        = content,
                 parent_comment = parent_comment,
