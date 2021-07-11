@@ -1,7 +1,6 @@
 import json
 
 from django.core      import exceptions
-
 from django.http      import JsonResponse
 from django.views     import View
 from django.db.models import Q
@@ -38,9 +37,8 @@ class CommentView(View):
     def get(self, request):
         try:
             product_id = request.GET.get('product_id', '')
-
-            comments = Comment.objects.filter(product_id=product_id)
-            results = []
+            comments   = Comment.objects.filter(product_id=product_id)
+            results    = []
 
             for comment in comments:
                 if not comment.parent_comment:
