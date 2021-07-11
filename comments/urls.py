@@ -1,7 +1,7 @@
-from django.urls import path
+from django.urls    import path
 
 from comments.views import CommentView, NestedCommentView
-from likes.views import LikeView
+from likes.views    import LikeView
 
 urlpatterns = [
     path('', CommentView.as_view()),
