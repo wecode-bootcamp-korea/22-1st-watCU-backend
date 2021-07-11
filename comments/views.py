@@ -135,24 +135,23 @@ class NestedCommentView(View):
             results        = []
 
             for comment in comments:
-                if not comment.parent_comment:
-                    if comment.user.rating_set.filter(product_id=product_id).exists():
-                        results.append({
-                            "id"             : comment.id,
-                            "name"           : comment.user.name,
-                            "rating"         : comment.user.rating_set.get(product_id=product_id).rating,
-                            "content"        : comment.content,
-                            "like"           : comment.like_set.count(),
-                        })
-                    
-                    else:
-                        results.append({
-                            "id"             : comment.id,
-                            "name"           : comment.user.name,
-                            "rating"         : 0,
-                            "content"        : comment.content,
-                            "like"           : comment.like_set.count(),
-                        })
+                if comment.user.rating_set.filter(product_id=product_id).exists():
+                    results.append({
+                        "id"             : comment.id,
+                        "name"           : comment.user.name,
+                        "rating"         : comment.user.rating_set.get(product_id=product_id).rating,
+                        "content"        : comment.content,
+                        "like"           : comment.like_set.count(),
+                    })
+                
+                else:
+                    results.append({
+                        "id"             : comment.id,
+                        "name"           : comment.user.name,
+                        "rating"         : 0,
+                        "content"        : comment.content,
+                        "like"           : comment.like_set.count(),
+                    })
 
             return JsonResponse({'results': results}, status=200)
 
