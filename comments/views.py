@@ -62,7 +62,7 @@ class CommentView(View):
                             "nested_comment" : comment.child_comment.count(),
                         })
             
-            return JsonResponse({'results': 'Success'}, status=200)
+            return JsonResponse({'results': results}, status=200)
 
         except ValueError:
             return JsonResponse({'message': 'ValueError'}, status=400)        
