@@ -84,7 +84,6 @@ class CommentView(View):
                                     else 0) ,
                 "content"        : comment.content,
                 "like"           : comment.like_set.count(),
-                "nested_comment" : comment.child_comment.count(),
             } for comment in comments]
 
             return JsonResponse({'results': results}, status=200)
