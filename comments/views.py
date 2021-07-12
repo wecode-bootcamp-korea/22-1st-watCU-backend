@@ -25,18 +25,11 @@ class CommentView(View):
                 if Comment.objects.get(id = comment).product_id != product:
                     raise DataError
 
-                Comment.objects.create(
-                content           = content,
-                product_id        = product,
-                user              = user,
-                parent_comment_id = comment
-            )
-                return JsonResponse({'results': 'Create Nested Comment'}, status=201)
-
             Comment.objects.create(
-                content = content,
-                product_id = product,
-                user = user
+            content           = content,
+            product_id        = product,
+            user              = user,
+            parent_comment_id = comment if comment else None,
             )
 
             return JsonResponse({'results': 'Create Comment'}, status=201)
