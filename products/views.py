@@ -14,8 +14,9 @@ from users.utils import ConfirmUser
 class ProductView(View):
     def get(self, request):
         try:
-            category = request.GET.get('category', '')
-            products = Product.objects.filter(category__name__startswith=category)
+            category_name = request.GET.get('category', '')
+            product_id    = request.GET.get('product_id', None)
+            products      = Product.objects.filter(category__name__startswith=category_name).exclude(id=product_id)
 
             results = [
                 {
@@ -25,7 +26,7 @@ class ProductView(View):
                     'price'          : product.price,
                     'image_url'      : product.image_set.first().image_url if product.image_set.exists() else None,
                     'product_id'     : product.id,
-                    'category_id'    : category.id,
+                    'category_id'    : product.category.id,
                     'average_rating' : ( round(Rating.objects.filter(product=product).aggregate(average=Avg('rating'))['average'], 1)
                                             if Rating.objects.filter(product=product).exists()
                                             else 0.0 )
@@ -49,8 +50,11 @@ class PrivateProductView(View):
     @ConfirmUser
     def get(self, request):
         try:
-            category = request.GET.get('category', '')
-            products = Product.objects.filter(category__name__startswith=category)
+            user          = request.user
+            category_name = request.GET.get('category', '')
+            products      = Product.objects.filter(category__name__startswith=category_name)
+
+            rating_count = Rating.objects.filter(user=user, product__category__name__startswith=category_name).count()
 
             results = [
                 {
@@ -60,7 +64,7 @@ class PrivateProductView(View):
                     'price'          : product.price,
                     'image_url'      : product.image_set.first().image_url if product.image_set.exists() else None,
                     'product_id'     : product.id,
-                    'category_id'    : category.id,
+                    'category_id'    : product.category.id,
                     'average_rating' : ( round(Rating.objects.filter(product=product).aggregate(average=Avg('rating'))['average'], 1)
                                             if Rating.objects.filter(product=product).exists()
                                             else 0.0 )
@@ -71,7 +75,9 @@ class PrivateProductView(View):
                 
             results = sorted(results, key=itemgetter('average_rating'), reverse=True)
             
-            return JsonResponse({'results': results}, status=200)
+            return JsonResponse({'results': results,
+                                 'rating_count': rating_count
+                                 }, status=200)
         
         except Image.DoesNotExist:
             return JsonResponse({'message': 'IMAGE_DOES_NOT_EXISTS'}, status=400)
