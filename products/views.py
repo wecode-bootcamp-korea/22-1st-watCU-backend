@@ -37,7 +37,7 @@ class ProductView(View):
                 
             results = sorted(results, key=itemgetter('average_rating'), reverse=True)
             
-            return JsonResponse({'results': results}, status=200)
+            return JsonResponse({'results': results[:12]}, status=200) # 임시 슬라이싱
         
         except Image.DoesNotExist:
             return JsonResponse({'message': 'IMAGE_DOES_NOT_EXISTS'}, status=400)
@@ -47,7 +47,7 @@ class ProductView(View):
             return JsonResponse({'message': error}, status=400)
 
 class PrivateProductView(View):
-    @ConfirmUser
+    # @ConfirmUser
     def get(self, request):
         try:
             user          = request.user
@@ -108,7 +108,6 @@ class ProductDetailView(View):
                 'main_image_url'     : image_urls[0] if image_urls else [],
                 'sub_image_url'      : image_urls[1:] if len(image_urls) > 1 else [],
                 'average_rating'     : average_rating,
-                'description'        : product.description,
             }
     
             return JsonResponse({'result': result}, status=200)
