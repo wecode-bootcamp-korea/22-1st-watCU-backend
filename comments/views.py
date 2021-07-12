@@ -15,20 +15,20 @@ class CommentView(View):
     @ConfirmUser
     def post(self, request):
         try:
-            data = json.loads(request.body)
+            data    = json.loads(request.body)
             content = data['content']
             product = data['product_id']
             comment = request.GET.get('comment-id', '')
-            user = request.user
+            user    = request.user
 
             if comment:
                 if Comment.objects.get(id = comment).product_id != product:
                     raise DataError
 
                 Comment.objects.create(
-                content = content,
-                product_id = product,
-                user = user,
+                content           = content,
+                product_id        = product,
+                user              = user,
                 parent_comment_id = comment
             )
                 return JsonResponse({'results': 'Create Nested Comment'}, status=201)
