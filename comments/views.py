@@ -15,19 +15,35 @@ class CommentView(View):
     @ConfirmUser
     def post(self, request):
         try:
-            data    = json.loads(request.body)
+            data = json.loads(request.body)
             content = data['content']
             product = data['product_id']
-            user    = request.user
-            
-            Comment.objects.create(
-                content    = content,
+            comment = request.GET.get('comment-id', '')
+            user = request.user
+
+            if comment:
+                if Comment.objects.get(id = comment).product_id != product:
+                    raise DataError
+
+                Comment.objects.create(
+                content = content,
                 product_id = product,
-                user       = user
+                user = user,
+                parent_comment_id = comment
+            )
+                return JsonResponse({'results': 'Create Nested Comment'}, status=201)
+
+            Comment.objects.create(
+                content = content,
+                product_id = product,
+                user = user
             )
 
-            return JsonResponse({'results': 'Success'}, status=201)
-        
+            return JsonResponse({'results': 'Create Comment'}, status=201)
+
+        except DataError:
+            return JsonResponse({'message': 'DataError'}, status=400)      
+
         except ValueError:
             return JsonResponse({'message': 'ValueError'}, status=400)        
     
@@ -36,32 +52,41 @@ class CommentView(View):
     
     def get(self, request):
         try:
-            product_id = request.GET.get('product_id', '')
-            comments   = Comment.objects.filter(product_id=product_id)
-            results    = []
+            product_id = request.GET.get('product-id', '')
+            comment_id = request.GET.get('comment-id', '')
 
-            for comment in comments:
-                if not comment.parent_comment:
-                    if comment.user.rating_set.filter(product_id=product_id).exists():
-                        results.append({
-                            "id"             : comment.id,
-                            "name"           : comment.user.name,
-                            "rating"         : comment.user.rating_set.get(product_id=product_id).rating,
-                            "content"        : comment.content,
-                            "like"           : comment.like_set.count(),
-                            "nested_comment" : comment.child_comment.count(),
-                        })
-                    
-                    else:
-                        results.append({
-                            "id"             : comment.id,
-                            "name"           : comment.user.name,
-                            "rating"         : 0,
-                            "content"        : comment.content,
-                            "like"           : comment.like_set.count(),
-                            "nested_comment" : comment.child_comment.count(),
-                        })
-            
+            # not nested_comment
+            if product_id and not comment_id:
+                comments = Comment.objects.filter(Q(product_id=product_id)&Q(parent_comment_id= None))
+
+                results = [{
+                    "id"             : comment.id,
+                    "name"           : comment.user.name,
+                    "rating"         : (comment.user.rating_set.get(product_id=product_id).rating 
+                                        if comment.user.rating_set.filter(product_id=product_id).exists()
+                                        else 0) ,
+                    "content"        : comment.content,
+                    "like"           : comment.like_set.count(),
+                    "nested_comment" : comment.child_comment.count(),
+                } for comment in comments]
+
+                return JsonResponse({'results': results}, status=200)
+
+            # nested_comment
+            comments = Comment.objects.filter(parent_comment_id = comment_id)
+            product_id = Comment.objects.get(id = comment_id).product.id
+
+            results = [{
+                "id"             : comment.id,
+                "name"           : comment.user.name,
+                "rating"         : (comment.user.rating_set.get(product_id=product_id).rating 
+                                    if comment.user.rating_set.filter(product_id=product_id).exists()
+                                    else 0) ,
+                "content"        : comment.content,
+                "like"           : comment.like_set.count(),
+                "nested_comment" : comment.child_comment.count(),
+            } for comment in comments]
+
             return JsonResponse({'results': results}, status=200)
 
         except ValueError:
@@ -102,61 +127,3 @@ class CommentView(View):
 
         except KeyError:
             return JsonResponse({'message': 'KeyError'}, status=400)
-
-class NestedCommentView(View):
-    @ConfirmUser
-    def post(self, request, comment_id):
-        try:
-            data           = json.loads(request.body)
-            content        = data['content']
-            user           = request.user
-            parent_comment = Comment.objects.get(id=comment_id)
-
-            Comment.objects.create(
-                content        = content,
-                parent_comment = parent_comment,
-                product        = parent_comment.product,
-                user           = user
-            )
-
-            return JsonResponse({'results': 'Success'}, status=201)
-    
-        except KeyError:
-            return JsonResponse({'message': 'KeyError'}, status=400)
-
-        except ValueError:
-            return JsonResponse({'message': 'ValueError'}, status=400)
-
-    def get(self, request, comment_id):
-        try:
-            parent_comment = Comment.objects.get(id=comment_id)
-            comments       = Comment.objects.filter(parent_comment=parent_comment)
-            product_id     = parent_comment.product.id
-            results        = []
-
-            for comment in comments:
-                if comment.user.rating_set.filter(product_id=product_id).exists():
-                    results.append({
-                        "id"             : comment.id,
-                        "name"           : comment.user.name,
-                        "rating"         : comment.user.rating_set.get(product_id=product_id).rating,
-                        "content"        : comment.content,
-                        "like"           : comment.like_set.count(),
-                    })
-                
-                else:
-                    results.append({
-                        "id"             : comment.id,
-                        "name"           : comment.user.name,
-                        "rating"         : 0,
-                        "content"        : comment.content,
-                        "like"           : comment.like_set.count(),
-                    })
-
-            return JsonResponse({'results': results}, status=200)
-
-        except Comment.DoesNotExist:
-            return JsonResponse({'message': 'Invalid comment'}, status=404)
-
-        except KeyError:
-            return JsonResponse({'message': "Key Error"}, status=400)
