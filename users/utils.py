@@ -28,5 +28,4 @@ class ConfirmUser:
             return JsonResponse({"message" : "INVALLED TOKEN"}, status = 401)
 
         except User.DoesNotExist:
-
             return JsonResponse({"message" : "INVALLED USER"}, status = 401)
