@@ -47,15 +47,13 @@ class ProductView(View):
             return JsonResponse({'message': error}, status=400)
 
 class PrivateProductView(View):
-    # @ConfirmUser
+    @ConfirmUser
     def get(self, request):
         try:
             limit  = int(request.GET.get('limit', 100))
             offset = int(request.GET.get('offset', 0))
 
-            # user          = request.user
-            user = User.objects.get(id=1)
-
+            user          = request.user
             category_name = request.GET.get('category', '')
 
             products = Product.objects.filter(category__name__startswith=category_name)
