@@ -94,7 +94,7 @@ class RatingGraphView(View):
         try:
             product = Product.objects.get(id=product_id)
 
-            results = [{'rating': row.rating} for row in Rating.objects.filter(product=product).all()]
+            results = [{'rating': row.rating} for row in product.rating_set.all()]
 
             return JsonResponse({'results': results}, status=200)
 
