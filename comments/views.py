@@ -46,24 +46,7 @@ class CommentView(View):
     def get(self, request):
         try:
             product_id = request.GET.get('product-id', '')
-            comment_id = request.GET.get('id', '')
-
-            q = Q()
-            if product_id and not comment_id:
-                q &= Q(product_id=product_id)
-                q &= Q(parent_comment_id= None)
-
-            if comment_id:
-                if product_id:
-                    if Comment.objects.get(id = comment_id).product_id != product_id:
-                        raise DataError
-                if Comment.objects.filter(Q(id = comment_id)&~Q(parent_comment_id=None)):
-                    raise DataError
-                product_id = Comment.objects.get(id = comment_id).product.id
-                
-                q &= Q(parent_comment_id=comment_id)
-
-            comments = Comment.objects.filter(q)
+            comments = Comment.objects.filter(product_id=product_id)
 
             results = [{
                 "id"             : comment.id,
@@ -116,3 +99,36 @@ class CommentView(View):
 
         except KeyError:
             return JsonResponse({'message': 'KeyError'}, status=400)
+
+class NestedCommentView(View):
+    def get(self,request, comment_id):
+        try:
+            if Comment.objects.filter(Q(id = comment_id)&~Q(parent_comment_id=None)):
+                raise DataError
+
+            product_id = Comment.objects.get(id = comment_id).product.id
+            comments   = Comment.objects.filter(parent_comment_id=comment_id)
+
+            results = [{
+                "id"             : comment.id,
+                "name"           : comment.user.name,
+                "rating"         : (comment.user.rating_set.get(product_id=product_id).rating 
+                                    if comment.user.rating_set.filter(product_id=product_id).exists()
+                                    else 0) ,
+                "content"        : comment.content,
+                "like"           : comment.like_set.count(),
+            } for comment in comments]
+
+            return JsonResponse({'results': results}, status=200)
+
+        except DataError:
+            return JsonResponse({'message': 'DataError'}, status=400)  
+
+        except ValueError:
+            return JsonResponse({'message': 'ValueError'}, status=400)        
+    
+        except KeyError:
+            return JsonResponse({'message': 'KeyError'}, status=400)
+
+        except Comment.DoesNotExist:
+            return JsonResponse({'message': 'Invalid comment'}, status=404)
