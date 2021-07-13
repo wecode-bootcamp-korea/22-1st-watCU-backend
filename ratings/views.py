@@ -88,3 +88,21 @@ class RatingView(View):
             return JsonResponse({'message': 'KEY_ERROR'}, status=400)
         except Exception as error:
             return JsonResponse({'message': error})
+
+class RatingGraphView(View):
+    def get(self, request, product_id):
+        try:
+            product = Product.objects.get(id=product_id)
+
+            results = [{'rating': row.rating} for row in Rating.objects.filter(product=product).all()]
+
+            return JsonResponse({'results': results}, status=200)
+
+        except Product.DoesNotExist:
+            return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXISTS'}, status=400)
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'}, status=400)
+        except JSONDecodeError:
+            return JsonResponse({'message': 'JSON_DECODE_ERROR'}, status=400)
+        except Exception as error:
+            return JsonResponse({'message': error})
