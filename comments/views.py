@@ -43,9 +43,8 @@ class CommentView(View):
         except KeyError:
             return JsonResponse({'message': 'KeyError'}, status=400)
     
-    def get(self, request):
+    def get(self, request, product_id):
         try:
-            product_id = request.GET.get('product-id', '')
             comments = Comment.objects.filter(product_id=product_id)
 
             results = [{
