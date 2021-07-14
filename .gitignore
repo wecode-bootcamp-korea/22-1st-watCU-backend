@@ -5,6 +5,7 @@
 ### Manual ###
 my_settings.py
 *.csv
+db_uploader.py
 
 ### Linux ###
 *~

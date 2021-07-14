@@ -4,7 +4,7 @@ import json
 from django.http    import JsonResponse
 from jwt.exceptions import DecodeError
 
-from my_settings    import SECRET_KEY
+from my_settings    import SECRET_KEY, ALGORITHM
 from users.models   import User
 
 class ConfirmUser:
@@ -16,7 +16,7 @@ class ConfirmUser:
             access_token     = request.headers.get('Authorization', None)
 
             if access_token:
-                payload      = jwt.decode( access_token, SECRET_KEY, algorithms = 'HS256' )
+                payload      = jwt.decode( access_token, SECRET_KEY, algorithms = ALGORITHM )
                 login_user   = User.objects.get(id = payload['user'])
                 request.user = login_user
                 return self.func(self, request, *arg, **kargs)
