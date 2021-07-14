@@ -51,12 +51,16 @@ class PrivateProductView(View):
         try:
             limit  = int(request.GET.get('limit', 100))
             offset = int(request.GET.get('offset', 0))
+            
+            user = request.user
 
-            user          = request.user
             category_name = request.GET.get('category', '')
-
             products = Product.objects.filter(category__name__startswith=category_name)
-            products = products.annotate(average_rating=Avg('rating__rating')).order_by('-average_rating')[limit*offset:limit*(offset+1)]
+
+            start_index = (limit*offset) % len(products)
+            end_index   = len(products) if (limit*(offset+1)) % len(products) == 0 else (limit*(offset+1)) % len(products)
+
+            products = products.annotate(average_rating=Avg('rating__rating')).order_by('-average_rating')[start_index:end_index]
 
             results = [
                 {
