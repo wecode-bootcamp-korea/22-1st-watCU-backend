@@ -106,3 +106,18 @@ class RatingGraphView(View):
             return JsonResponse({'message': 'JSON_DECODE_ERROR'}, status=400)
         except Exception as error:
             return JsonResponse({'message': error})
+
+class RatingCountView(View):
+    def get(self, request):
+        try:
+            count  = Rating.objects.count()
+            result = {'count': count}
+
+            return JsonResponse({'result': result}, status=200)
+        
+        except JSONDecodeError:
+            return JsonResponse({'message': 'JSON_DECODE_ERROR'}, status=400)
+        except Rating.DoesNotExist:
+            return JsonResponse({'message': 'RATING_DOESNT_EXISTS'}, status=400)
+        except Exception as error:
+            return JsonResponse({'message': error})
