@@ -15,11 +15,9 @@ from users.utils                  import ConfirmUser
 
 class StatusView(View):
     @ConfirmUser
-    def post(self, request, product_id):
+    def get(self, request, product_id, status):
         try:
-            data    = json.loads(request.body)
             user    = request.user
-            status  = data["status"]
 
             status_object , created = Status.objects.get_or_create(
                 status              = status,
