@@ -19,8 +19,11 @@ class RatingView(View):
         try:
             user    = request.user
             product = Product.objects.get(id=product_id)
-            rating  = Rating.objects.get(user=user, product=product).rating
-            
+            rating  = ( Rating.objects.get(user=user, product=product).rating
+                        if Rating.objects.filter(user=user, product=product).exists()
+                        else 0.0
+                      )
+
             result = {'rating': rating}        
 
             return JsonResponse({'result': result}, status=200)

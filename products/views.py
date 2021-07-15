@@ -1,5 +1,3 @@
-from operator import itemgetter
-
 from django.http      import JsonResponse
 from django.db.models import Avg
 from django.views     import View
@@ -10,8 +8,6 @@ from products.models import Category, Product, Image
 from ratings.models  import Rating
 
 from users.utils import ConfirmUser
-
-from users.models import User
 
 class ProductView(View):
     def get(self, request):
@@ -27,7 +23,7 @@ class ProductView(View):
                     'category_name'  : product.category.name,
                     'korean_name'    : product.korean_name,
                     'english_name'   : product.english_name,
-                    'price'          : product.price,
+                    'price'          : f'{int(product.price)}원',
                     'image_url'      : product.image_set.first().image_url if product.image_set.exists() else None,
                     'product_id'     : product.id,
                     'category_id'    : product.category.id,
@@ -48,14 +44,13 @@ class ProductView(View):
             return JsonResponse({'message': error}, status=400)
 
 class PrivateProductView(View):
-    # @ConfirmUser
+    @ConfirmUser
     def get(self, request):
         try:
             limit  = int(request.GET.get('limit', 100))
             offset = int(request.GET.get('offset', 0))
             
-            # user = request.user
-            user = User.objects.get(id=1)
+            user = request.user
 
             category_name = request.GET.get('category', '')
             products = Product.objects.filter(category__name__startswith=category_name)
@@ -70,7 +65,7 @@ class PrivateProductView(View):
                     'category_name'  : product.category.name,
                     'korean_name'    : product.korean_name,
                     'english_name'   : product.english_name,
-                    'price'          : product.price,
+                    'price'          : f'{int(product.price)}원',
                     'image_url'      : product.image_set.first().image_url if product.image_set.exists() else None,
                     'product_id'     : product.id,
                     'category_id'    : product.category.id,
@@ -110,7 +105,7 @@ class ProductDetailView(View):
                 'category_image_url' : product.category.image_url,
                 'korean_name'        : product.korean_name,
                 'english_name'       : product.english_name,
-                'price'              : product.price,
+                'price'              : f'{int(product.price)}',
                 'description'        : product.description,
                 'main_image_url'     : image_urls[0] if image_urls else [],
                 'sub_image_url'      : image_urls[1:] if len(image_urls) > 1 else [],
